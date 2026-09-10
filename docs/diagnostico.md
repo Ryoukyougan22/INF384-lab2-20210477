@@ -3,29 +3,21 @@
 ## 1.1 Los cuatro defectos
 
 ### Defecto 1 — El job de publicación no depende de la validación
-
-Archivo: `.github/workflows/pipeline.yml`  
 Líneas: 42-68.
 
 El job `publicar` no tiene `needs: validar`. Esto significa que GitHub puede ejecutar `validar` y `publicar` de forma independiente, incluso en paralelo. Por lo que esto causa que se puede construir y publicar el artefacto aunque las pruebas o el análisis de calidad fallen. 
 
-### Defecto 2 — Se publica ante cualquier push
-
-Archivo: `.github/workflows/pipeline.yml`  
+### Defecto 2 — Se publica ante cualquier push  
 Líneas: 3-6 y 42-43.
 
 El trigger `push` no tiene filtro de rama y el job `publicar` se ejecuta para cualquier evento `push`. Por lo que se pierde la garantía de que únicamente el código de una rama autorizada, como `main`, sea publicado.
 
 ### Defecto 3 — El pipeline no espera el resultado del Quality Gate
-
-Archivo: `.github/workflows/pipeline.yml`  
 Líneas: 32-40.
 
 El workflow ejecuta el análisis de SonarQube Cloud, pero no se observa una configuración que obligue al pipeline a esperar y verificar el resultado del Quality Gate. En consecuencia, el análisis puede enviarse correctamente a SonarQube Cloud y el job terminar exitosamente aunque posteriormente el Quality Gate determine que el código no cumple las condiciones de calidad.
 
 ### Defecto 4 — Se repite la preparación e instalación de dependencias
-
-Archivo: `.github/workflows/pipeline.yml`  
 Líneas: 19-27 y 50-58.
 
 Los jobs `validar` y `publicar` configuran Python e instalan nuevamente las dependencias. Esto resulta en que se aumenta innecesariamente la duración del workflow y el tiempo que el desarrollador debe esperar para recibir el resultado.
@@ -42,7 +34,6 @@ El defecto que más ataca la restricción de nuestro caso transversal, Seguros P
 En el Value Stream Map del caso se observa un alto nivel de retrabajo: 45 de cada 100 elementos que llegan a pruebas funcionales regresan a desarrollo con defectos, y 76 de 94 historias fueron devueltas al menos una vez a una etapa anterior.
 
 Por ello, hacer que el Quality Gate bloquee el pipeline cuando no se cumplen las condiciones de calidad ayuda a detectar problemas antes y evita que código con problemas siga avanzando, reduciendo parte del retrabajo que alarga el flujo.
-
 
 ## 1.4 Métrica DORA
 
