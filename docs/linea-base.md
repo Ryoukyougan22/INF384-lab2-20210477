@@ -5,9 +5,9 @@ sin modificar ningun archivo del repositorio. Registrar aqui los resultados.
 
 | Ejecucion | Duracion | URL |
 |---|---|---|
-| 1 | | |
-| 2 | | |
-| 3 | | |
+| 1 | 1m 12s | https://github.com/Ryoukyougan22/INF384-lab2-20210477/actions/runs/34510472104 |
+| 2 | 59s | https://github.com/Ryoukyougan22/INF384-lab2-20210477/actions/runs/34510990249 |
+| 3 | 55s | https://github.com/Ryoukyougan22/INF384-lab2-20210477/actions/runs/34511311343 |
 
 ## Declaracion de uso de IA generativa
 
