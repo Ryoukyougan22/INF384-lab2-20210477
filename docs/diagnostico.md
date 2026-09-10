@@ -57,10 +57,58 @@ Elegimos Lead Time for Changes porque podemos utilizar la duración del workflow
 Se utiliza el proxy como la mediana de la duración total de tres ejecuciones consecutivas del workflow.
 
 Línea base:
-- Ejecución 1: 72 segundos (1m 12 s)
+- Ejecución 1: 72 segundos (1m 12s)
 - Ejecución 2: 59 segundos.
 - Ejecución 3: 55 segundos.
 
 Mediana de línea base: 59 segundos.
 
 Después de la intervención se ejecutará nuevamente el workflow tres veces y se comparará la nueva mediana contra los 59 segundos iniciales.
+
+## 4.1 Medición posterior
+
+Antes de la intervención, la línea base estuvo conformada por tres ejecuciones:
+
+- Ejecución 1: 72 segundos. (1m 12s)
+- Ejecución 2: 59 segundos.
+- Ejecución 3: 55 segundos.
+
+La mediana de la línea base fue de 59 segundos.
+
+Después de la intervención se realizaron tres nuevas ejecuciones sin modificar el workflow entre ellas:
+
+- Ejecución 1: 77 segundos. (1m 17s)
+- Ejecución 2: 89 segundos. (1m 29s)
+- Ejecución 3: 86 segundos. (1m 26s)
+
+La mediana posterior fue de 86 segundos. Por lo tanto, el proxy aumentó de 59 a 86 segundos, es decir, aumentó 27 segundos, equivalente aproximadamente a un 45.8 %.
+El proxy no mejoró en términos de duración total. Esto se explica porque, después de la intervención, el job `publicar` depende de `validar` mediante `needs: validar`, por lo que ambos jobs ya no se ejecutan en paralelo. Además, el análisis de SonarQube Cloud ahora espera el resultado del Quality Gate antes de permitir que el pipeline continúe.
+
+## 4.2 Justificación de la versión
+
+La versión declarada después de la intervención es `1.3.0`.
+
+La versión anterior era `1.2.0`. Al revisar el historial de commits posterior al tag `v1.2.0`, se identificó el commit: `feat(tarifas): agregar desglose de la tarifa calculada`
+Este commit incorpora nueva funcionalidad sin introducir un cambio incompatible con la versión anterior. De acuerdo con versionado semántico, un cambio de tipo `feat` corresponde a incrementar la versión minor.
+
+Por ello, la versión cambia de: `1.2.0` → `1.3.0`
+
+## 4.3 Lo que no se resolvió
+
+Una limitación que permanece es que el pipeline no realiza un despliegue real a producción. El job `publicar` construye el paquete y lo guarda como un artifact de GitHub Actions, pero el software no llega a ejecutarse en un ambiente productivo. Por ello, la duración del workflow utilizada en este laboratorio es solamente un proxy del Lead Time for Changes y no representa la métrica DORA real de extremo a extremo.
+
+Para resolver esta limitación sería necesario incorporar una etapa de despliegue hacia un ambiente de producción y medir automáticamente el tiempo desde la integración del cambio hasta que este se encuentre efectivamente desplegado.
+
+## 4.4 Declaración de uso de IA generativa
+
+Se utilizó ChatGPT de OpenAI como herramienta de apoyo durante el desarrollo del laboratorio.
+
+La herramienta fue utilizada principalmente para aclarar conceptos de GitHub Actions y SonarQube Cloud, revisar algunas configuraciones del workflow y ayudar a interpretar los resultados obtenidos en las ejecuciones y en el Quality Gate.
+
+Las configuraciones, modificaciones del repositorio, corrección de defectos, pruebas, ejecuciones y verificaciones fueron realizadas manualmente.
+
+Algunos prompts utilizados fueron:
+- "¿Qué significa SonarCloud y cuáles son sus principales métricas?"
+- "¿Está bien configurado este fragmento de mi workflow?"
+- "¿Qué debería revisar para verificar que mi pipeline cumple los requisitos?"
+- "¿Cómo puedo comprobar que el Quality Gate está funcionando correctamente?"
