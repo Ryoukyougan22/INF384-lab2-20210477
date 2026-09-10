@@ -5,12 +5,12 @@
 ### Defecto 1 — El job de publicación no depende de la validación
 Líneas: 42-68.
 
-El job `publicar` no tiene `needs: validar`. Esto significa que GitHub puede ejecutar `validar` y `publicar` de forma independiente, incluso en paralelo. Por lo que esto causa que se puede construir y publicar el artefacto aunque las pruebas o el análisis de calidad fallen. 
+El job "publicar" no tiene "needs: validar". Esto significa que GitHub puede ejecutar "validar" y "publicar" de forma independiente, incluso en paralelo. Por lo que esto causa que se puede construir y publicar el artefacto aunque las pruebas o el análisis de calidad fallen. 
 
 ### Defecto 2 — Se publica ante cualquier push  
 Líneas: 3-6 y 42-43.
 
-El trigger `push` no tiene filtro de rama y el job `publicar` se ejecuta para cualquier evento `push`. Por lo que se pierde la garantía de que únicamente el código de una rama autorizada, como `main`, sea publicado.
+El trigger push no tiene filtro de rama y el job "publicar" se ejecuta para cualquier evento push. Por lo que se pierde la garantía de que únicamente el código de una rama autorizada, como main, sea publicado.
 
 ### Defecto 3 — El pipeline no espera el resultado del Quality Gate
 Líneas: 32-40.
@@ -20,12 +20,12 @@ El workflow ejecuta el análisis de SonarQube Cloud, pero no se observa una conf
 ### Defecto 4 — Se repite la preparación e instalación de dependencias
 Líneas: 19-27 y 50-58.
 
-Los jobs `validar` y `publicar` configuran Python e instalan nuevamente las dependencias. Esto resulta en que se aumenta innecesariamente la duración del workflow y el tiempo que el desarrollador debe esperar para recibir el resultado.
+Los jobs "validar" y "publicar" configuran Python e instalan nuevamente las dependencias. Esto resulta en que se aumenta innecesariamente la duración del workflow y el tiempo que el desarrollador debe esperar para recibir el resultado.
 
 ## 1.2 El defecto que explica la duración
 
 El defecto que principalmente explica la duración observada es el Defecto 4: la preparación e instalación repetida de dependencias.
-Los jobs `validar` y `publicar` utilizan runners independientes y ambos vuelven a configurar Python e instalar las dependencias. Esto genera trabajo repetido y aumenta el tiempo total del pipeline.
+Los jobs "validar" y "publicar" utilizan runners independientes y ambos vuelven a configurar Python e instalar las dependencias. Esto genera trabajo repetido y aumenta el tiempo total del pipeline.
 
 ## 1.3 Vínculo con el caso transversal
 
@@ -73,20 +73,20 @@ Después de la intervención se realizaron tres nuevas ejecuciones sin modificar
 - Ejecución 3: 86 segundos. (1m 26s)
 
 La mediana posterior fue de 86 segundos. Por lo tanto, el proxy aumentó de 59 a 86 segundos, es decir, aumentó 27 segundos, equivalente aproximadamente a un 45.8 %.
-El proxy no mejoró en términos de duración total. Esto se explica porque, después de la intervención, el job `publicar` depende de `validar` mediante `needs: validar`, por lo que ambos jobs ya no se ejecutan en paralelo. Además, el análisis de SonarQube Cloud ahora espera el resultado del Quality Gate antes de permitir que el pipeline continúe.
+El proxy no mejoró en términos de duración total. Esto se explica porque, después de la intervención, el job "publicar" depende de "validar" mediante "needs: validar", por lo que ambos jobs ya no se ejecutan en paralelo. Además, el análisis de SonarQube Cloud ahora espera el resultado del Quality Gate antes de permitir que el pipeline continúe.
 
 ## 4.2 Justificación de la versión
 
-La versión declarada después de la intervención es `1.3.0`.
+La versión declarada después de la intervención es 1.3.0.
 
-La versión anterior era `1.2.0`. Al revisar el historial de commits posterior al tag `v1.2.0`, se identificó el commit: `feat(tarifas): agregar desglose de la tarifa calculada`
-Este commit incorpora nueva funcionalidad sin introducir un cambio incompatible con la versión anterior. De acuerdo con versionado semántico, un cambio de tipo `feat` corresponde a incrementar la versión minor.
+La versión anterior era 1.2.0. Al revisar el historial de commits posterior al tag v1.2.0, se identificó el commit: "feat(tarifas): agregar desglose de la tarifa calculada"
+Este commit incorpora nueva funcionalidad sin introducir un cambio incompatible con la versión anterior. De acuerdo con versionado semántico, un cambio de tipo "feat" corresponde a incrementar la versión minor.
 
-Por ello, la versión cambia de: `1.2.0` → `1.3.0`
+Por ello, la versión cambia de: 1.2.0 → 1.3.0
 
 ## 4.3 Lo que no se resolvió
 
-Una limitación que permanece es que el pipeline no realiza un despliegue real a producción. El job `publicar` construye el paquete y lo guarda como un artifact de GitHub Actions, pero el software no llega a ejecutarse en un ambiente productivo. Por ello, la duración del workflow utilizada en este laboratorio es solamente un proxy del Lead Time for Changes y no representa la métrica DORA real de extremo a extremo.
+Una limitación que permanece es que el pipeline no realiza un despliegue real a producción. El job "publicar" construye el paquete y lo guarda como un artifact de GitHub Actions, pero el software no llega a ejecutarse en un ambiente productivo. Por ello, la duración del workflow utilizada en este laboratorio es solamente un proxy del Lead Time for Changes y no representa la métrica DORA real de extremo a extremo.
 
 Para resolver esta limitación sería necesario incorporar una etapa de despliegue hacia un ambiente de producción y medir automáticamente el tiempo desde la integración del cambio hasta que este se encuentre efectivamente desplegado.
 
